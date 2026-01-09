@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess Right OR DIE!</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; background-color: #1a1a1a; color: white; }
+        .game-container { background: #333; padding: 20px; border-radius: 10px; display: inline-block; }
+        input { padding: 10px; width: 50px; }
+        button { padding: 10px 20px; cursor: pointer; background: red; color: white; border: none; font-weight: bold; }
+        #message { margin-top: 20px; font-weight: bold; height: 1.2em; }
+    </style>
+</head>
+<body>
+
+    <h1>Guess Right OR DIE!</h1>
+    <p>Survival depends on your wits. You have 3 chances.</p>
+
+    <div class="game-container">
+        <div id="game-ui">
+            <label for="guess">Enter a number (1-10):</label>
+            <input type="number" id="guess" min="1" max="10">
+            <button onclick="checkGuess()">GUESS</button>
+        </div>
+        <p id="message"></p>
+        <p id="attempts">Attempts left: 3</p>
+        <button id="reset-btn" style="display:none;" onclick="resetGame()">Play Again?</button>
+    </div>
+
+    <script>
+        let targetNumber = Math.floor(Math.random() * 10) + 1;
+        let attemptsLeft = 3;
+        const playerName = prompt("Enter your name to begin your trial...") || "Stranger";
+
+        function checkGuess() {
+            const guessInput = document.getElementById('guess');
+            const message = document.getElementById('message');
+            const attemptsDisplay = document.getElementById('attempts');
+            const userGuess = parseInt(guessInput.value);
+
+            if (isNaN(userGuess) || userGuess < 1 || userGuess > 10) {
+                message.innerText = "Invalid number! Stay focused!";
+                return;
+            }
+
+            attemptsLeft--;
+
+            if (userGuess === targetNumber) {
+                
+                message.innerHTML = `<span style="color: lime;">Congratulations ${playerName}! You live to see another day!</span>`;
+                endGame();
+            } else if (attemptsLeft === 0) {
+                message.innerHTML = `<span style="color: red;">WRONG! The number was ${targetNumber}. YOU DIED!</span>`;
+                endGame();
+            } else {
+                let hint = userGuess < targetNumber ? "Higher!" : "Lower!";
+                message.innerText = `WRONG. ${hint}`;
+                attemptsDisplay.innerText = `Attempts left: ${attemptsLeft}`;
+            }
+            
+            guessInput.value = ""; 
+            guessInput.focus();
+        }
+
+        function endGame() {
+            document.querySelector('button[onclick="checkGuess()"]').disabled = true;
+            document.getElementById('reset-btn').style.display = "inline-block";
+        }
+
+        function resetGame() {
+            targetNumber = Math.floor(Math.random() * 10) + 1;
+            attemptsLeft = 3;
+            document.getElementById('message').innerText = "";
+            document.getElementById('attempts').innerText = `Attempts left: 3`;
+            document.querySelector('button[onclick="checkGuess()"]').disabled = false;
+            document.getElementById('reset-btn').style.display = "none";
+        }
+    </script>
+</body>
+</html>
